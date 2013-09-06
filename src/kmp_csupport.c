@@ -838,6 +838,8 @@ __kmpc_flush(ident_t *loc, ...)
                     #endif // __GNUC__
                 }; // if
             #endif // KMP_MIC
+	#elif KMP_ARCH_PPC64
+            // TODO
         #else
             #error Unknown or unsupported architecture
         #endif

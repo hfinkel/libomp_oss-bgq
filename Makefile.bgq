@@ -1,0 +1,63 @@
+FEATURE_FLAGS = -DOMP_40_ENABLED=1 -DOMP_30_ENABLED=1 -DOMP_VERSION=201107 -DKMP_VERSION_MAJOR=5 \
+		-DCACHE_LINE=64 -DKMP_ADJUST_BLOCKTIME=1 -DBUILD_I8 -DKMP_USE_ADAPTIVE_LOCKS=0 \
+		-DKMP_DEBUG_ADAPTIVE_LOCKS=0 -DINTEL_NO_ITTNOTIFY_API \
+		-DKMP_LIBRARY_FILE=\"libomp.so\" -D_KMP_BUILD_TIME="\"$(shell date '+%Y%m%d')\""
+
+CPPFLAGS = ${FEATURE_FLAGS} -D__float128='long double'
+
+CC = powerpc64-bgq-linux-gcc
+CXX = powerpc64-bgq-linux-g++
+
+all: build/libomp.a build/libomp.so
+
+build/.dir:
+	mkdir -p build
+	touch build/.dir
+
+build/%.o: src/%.cpp build/kmp_i18n_id.inc build/kmp_i18n_default.inc
+	${CXX} -c ${CPPFLAGS} -O3 -Isrc -Ibuild -o $@ $<
+
+build/%.o: src/%.c build/kmp_i18n_id.inc build/kmp_i18n_default.inc
+	${CC} -x c++ -c ${CPPFLAGS} -O3 -Isrc -Ibuild -o $@ $<
+
+OBJS =	build/kmp_alloc.o \
+	build/kmp_atomic.o \
+	build/kmp_csupport.o \
+	build/kmp_debug.o \
+	build/kmp_environment.o \
+	build/kmp_error.o \
+	build/kmp_ftn_cdecl.o \
+	build/kmp_ftn_extra.o \
+	build/kmp_ftn_stdcall.o \
+	build/kmp_global.o \
+	build/kmp_i18n.o \
+	build/kmp_io.o \
+	build/kmp_itt.o \
+	build/kmp_runtime.o \
+	build/kmp_settings.o \
+	build/kmp_str.o \
+	build/kmp_tasking.o \
+	build/kmp_taskq.o \
+	build/kmp_threadprivate.o \
+	build/kmp_utility.o \
+	build/kmp_version.o \
+	build/test-touch.o \
+	build/z_Linux_util.o
+
+build/libomp.so: $(OBJS)
+	${CXX} -shared -o $@.1.0 $^ -Wl,-soname,$@.1
+	(cd $(shell dirname $@) && ln -sf $(shell basename $@.1.0) $(shell basename $@.1))
+	(cd $(shell dirname $@) && ln -sf $(shell basename $@.1) $(shell basename $@))
+
+build/libomp.a: $(OBJS)
+	ar cr $@ $^
+
+build/kmp_i18n_id.inc: src/i18n/en_US.txt tools/message-converter.pl build/.dir
+	perl tools/message-converter.pl --prefix=kmp_i18n --enum=$@ $<
+
+build/kmp_i18n_default.inc: src/i18n/en_US.txt tools/message-converter.pl build/.dir
+	perl tools/message-converter.pl --prefix=kmp_i18n --default=$@ $<
+
+clean:
+	rm -rf build
+

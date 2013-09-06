@@ -66,10 +66,12 @@
 #define KMP_OS_LINUX    0
 #define KMP_OS_DARWIN   0
 #define KMP_OS_WINDOWS    0
+#define KMP_OS_CNK      0
 #define KMP_OS_UNIX     0  /* disjunction of KMP_OS_LINUX with KMP_OS_DARWIN */
 
 #define KMP_ARCH_X86        0
 #define KMP_ARCH_X86_64	    0
+#define KMP_ARCH_PPC64      0
 
 #ifdef _WIN32
 # undef KMP_OS_WINDOWS
@@ -84,6 +86,11 @@
 #if ( defined __linux )
 # undef KMP_OS_LINUX
 # define KMP_OS_LINUX 1
+#endif
+
+#if ( defined __bgq__ )
+# undef KMP_OS_CNK
+# define KMP_OS_CNK 1
 #endif
 
 #if (1 != KMP_OS_LINUX + KMP_OS_DARWIN + KMP_OS_WINDOWS)
@@ -109,13 +116,16 @@
 # if defined __x86_64
 #  undef KMP_ARCH_X86_64
 #  define KMP_ARCH_X86_64 1
+# elif defined __powerpc64__
+#  undef KMP_ARCH_PPC64
+#  define KMP_ARCH_PPC64 1
 # else
 #  undef KMP_ARCH_X86
 #  define KMP_ARCH_X86 1
 # endif
 #endif
 
-#if (1 != KMP_ARCH_X86 + KMP_ARCH_X86_64)
+#if (1 != KMP_ARCH_X86 + KMP_ARCH_X86_64 + KMP_ARCH_PPC64)
 # error Unknown or unsupported architecture
 #endif
 
@@ -181,7 +191,7 @@
 
 #if KMP_ARCH_X86
 # define KMP_SIZE_T_SPEC KMP_UINT32_SPEC
-#elif KMP_ARCH_X86_64
+#elif KMP_ARCH_X86_64 || KMP_ARCH_PPC64
 # define KMP_SIZE_T_SPEC KMP_UINT64_SPEC
 #else
 # error "Can't determine size_t printf format specifier."
@@ -466,6 +476,10 @@ enum kmp_mem_fence_type {
 #endif /* USE_ITT_BUILD */
 #endif /* KMP_OS_WINDOWS */
 
+#if KMP_ARCH_PPC64
+# define KMP_MB()       __asm__ __volatile__ ("sync" : : : "memory")
+#endif
+
 #ifndef KMP_MB
 # define KMP_MB()       /* nothing to do */
 #endif
@@ -572,7 +586,7 @@ typedef void    (*microtask_t)( int *gtid, int *npr, ... );
 #endif /* KMP_I8 */
 
 /* Workaround for Intel(R) 64 code gen bug when taking address of static array (Intel(R) 64 Tracker #138) */
-#if KMP_ARCH_X86_64 && KMP_OS_LINUX
+#if (KMP_ARCH_X86_64 || KMP_ARCH_PPC64) && KMP_OS_LINUX
 # define STATIC_EFI2_WORKAROUND
 #else
 # define STATIC_EFI2_WORKAROUND static

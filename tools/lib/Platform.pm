@@ -172,6 +172,8 @@ sub target_options() {
         $_host_arch = "64";
     } elsif ( $hardware_platform eq "x86_64" ) {
         $_host_arch = "32e";
+    } elsif ( $hardware_platform eq "ppc64" ) {
+        $_host_arch = "ppc64";
     } else {
         die "Unsupported host hardware platform: \"$hardware_platform\"; stopped";
     }; # if

@@ -49,7 +49,7 @@
 #include <sys/resource.h>
 #include <sys/syscall.h>
 
-#if KMP_OS_LINUX
+#if KMP_OS_LINUX && !KMP_OS_CNK
 # include <sys/sysinfo.h>
 # if KMP_OS_LINUX && (KMP_ARCH_X86 || KMP_ARCH_X86_64)
 // We should really include <futex.h>, but that causes compatibility problems on different
@@ -118,7 +118,7 @@ __kmp_print_cond( char *buffer, kmp_cond_align_t *cond )
 /* ------------------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
 
-#if KMP_OS_LINUX
+#if KMP_OS_LINUX && !KMP_OS_CNK
 
 /*
  * Affinity support
@@ -453,7 +453,7 @@ __kmp_change_thread_affinity_mask( int gtid, kmp_affin_mask_t *new_mask,
 /* ------------------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
 
-#if KMP_OS_LINUX && (KMP_ARCH_X86 || KMP_ARCH_X86_64)
+#if KMP_OS_LINUX && (KMP_ARCH_X86 || KMP_ARCH_X86_64) && !KMP_OS_CNK
 
 int
 __kmp_futex_determine_capable()
@@ -470,7 +470,7 @@ __kmp_futex_determine_capable()
     return retval;
 }
 
-#endif // KMP_OS_LINUX && (KMP_ARCH_X86 || KMP_ARCH_X86_64)
+#endif // KMP_OS_LINUX && (KMP_ARCH_X86 || KMP_ARCH_X86_64) && !KMP_OS_CNK
 
 /* ------------------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */

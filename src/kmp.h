@@ -100,7 +100,9 @@ typedef __float128 _Quad;
 
 #include <errno.h>
 
+#ifndef __powerpc64__
 #include <xmmintrin.h>
+#endif
 
 #include "kmp_os.h"
 #include "kmp_version.h"
