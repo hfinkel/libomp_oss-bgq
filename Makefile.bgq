@@ -15,10 +15,10 @@ build/.dir:
 	touch build/.dir
 
 build/%.o: src/%.cpp build/kmp_i18n_id.inc build/kmp_i18n_default.inc
-	${CXX} -c ${CPPFLAGS} -O3 -Isrc -Ibuild -o $@ $<
+	${CXX} -c ${CPPFLAGS} -g -O3 -Isrc -Ibuild -o $@ $<
 
 build/%.o: src/%.c build/kmp_i18n_id.inc build/kmp_i18n_default.inc
-	${CC} -x c++ -c ${CPPFLAGS} -O3 -Isrc -Ibuild -o $@ $<
+	${CC} -x c++ -c ${CPPFLAGS} -g -O3 -Isrc -Ibuild -o $@ $<
 
 OBJS =	build/kmp_alloc.o \
 	build/kmp_atomic.o \
