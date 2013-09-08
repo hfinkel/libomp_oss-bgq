@@ -43,11 +43,11 @@ OBJS =	build/kmp_alloc.o \
 	build/kmp_utility.o \
 	build/kmp_version.o \
 	build/kmp_lock.o \
-	build/test-touch.o \
 	build/z_Linux_util.o
 
+BGSYS_FLOOR=$(shell readlink /bgsys/drivers/ppcfloor)
 build/libomp.so: $(OBJS)
-	${CXX} -shared -o $@.1.0 $^ -Wl,-soname,$@.1
+	${CXX} -Wl,-rpath -Wl,${BGSYS_FLOOR}/gnu-linux/powerpc64-bgq-linux/lib -shared -o $@.1.0 $^ -Wl,-soname,$@.1 -lpthread
 	(cd $(shell dirname $@) && ln -sf $(shell basename $@.1.0) $(shell basename $@.1))
 	(cd $(shell dirname $@) && ln -sf $(shell basename $@.1) $(shell basename $@))
 
