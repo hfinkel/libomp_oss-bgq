@@ -47,7 +47,7 @@ OBJS =	build/kmp_alloc.o \
 
 BGSYS_FLOOR=$(shell readlink /bgsys/drivers/ppcfloor)
 build/libomp.so: $(OBJS)
-	${CXX} -Wl,-rpath -Wl,${BGSYS_FLOOR}/gnu-linux/powerpc64-bgq-linux/lib -shared -o $@.1.0 $^ -Wl,-soname,$@.1 -lpthread
+	${CXX} -Wl,-rpath -Wl,${BGSYS_FLOOR}/gnu-linux/powerpc64-bgq-linux/lib -shared -o $@.1.0 $^ -Wl,-soname,$(shell basename $@.1) -lpthread
 	(cd $(shell dirname $@) && ln -sf $(shell basename $@.1.0) $(shell basename $@.1))
 	(cd $(shell dirname $@) && ln -sf $(shell basename $@.1) $(shell basename $@))
 
