@@ -1422,7 +1422,7 @@ kmpc_set_defaults( char const * str )
 int
 kmpc_set_affinity_mask_proc( int proc, void **mask )
 {
-#if defined(KMP_STUB) || !(KMP_OS_WINDOWS || KMP_OS_LINUX)
+#if defined(KMP_STUB) || !(KMP_OS_WINDOWS || KMP_OS_LINUX) || KMP_OS_CNK
     return -1;
 #else
     if ( ! TCR_4(__kmp_init_middle) ) {
@@ -1435,7 +1435,7 @@ kmpc_set_affinity_mask_proc( int proc, void **mask )
 int
 kmpc_unset_affinity_mask_proc( int proc, void **mask )
 {
-#if defined(KMP_STUB) || !(KMP_OS_WINDOWS || KMP_OS_LINUX)
+#if defined(KMP_STUB) || !(KMP_OS_WINDOWS || KMP_OS_LINUX) || KMP_OS_CNK
     return -1;
 #else
     if ( ! TCR_4(__kmp_init_middle) ) {
@@ -1448,7 +1448,7 @@ kmpc_unset_affinity_mask_proc( int proc, void **mask )
 int
 kmpc_get_affinity_mask_proc( int proc, void **mask )
 {
-#if defined(KMP_STUB) || !(KMP_OS_WINDOWS || KMP_OS_LINUX)
+#if defined(KMP_STUB) || !(KMP_OS_WINDOWS || KMP_OS_LINUX) || KMP_OS_CNK
     return -1;
 #else
     if ( ! TCR_4(__kmp_init_middle) ) {

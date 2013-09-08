@@ -4817,7 +4817,7 @@ __kmp_env_initialize( char const * string ) {
         KMP_DEBUG_ASSERT( __kmp_user_lock_kind != lk_default );
     }
 
-#if KMP_OS_LINUX || KMP_OS_WINDOWS
+#if (KMP_OS_LINUX && !KMP_OS_CNK) || KMP_OS_WINDOWS
     if ( ! TCR_4(__kmp_init_middle) ) {
         //
         // Determine if the machine/OS is actually capable of supporting
@@ -4986,7 +4986,7 @@ __kmp_env_initialize( char const * string ) {
 # endif
     }
 
-#elif KMP_OS_DARWIN
+#elif KMP_OS_DARWIN || KMP_OS_CNK
     // affinity not supported
 #else
     #error "Unknown or unsupported OS"

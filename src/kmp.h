@@ -3110,11 +3110,15 @@ extern kmp_int64 __kmp_test_then_add64( volatile kmp_int64 *p, kmp_int64 d );
 extern kmp_int64 __kmp_test_then_or64( volatile kmp_int64 *p, kmp_int64 d );
 extern kmp_int64 __kmp_test_then_and64( volatile kmp_int64 *p, kmp_int64 d );
 
+#ifndef KMP_COMPARE_AND_STORE_ACQ8
 #define KMP_COMPARE_AND_STORE_ACQ8     __kmp_compare_and_store8
 #define KMP_COMPARE_AND_STORE_REL8     __kmp_compare_and_store8
+#endif
 extern kmp_int8 __kmp_compare_and_store8( volatile kmp_int8 *p, kmp_int8 cv, kmp_int8 sv );
+#ifndef KMP_COMPARE_AND_STORE_ACQ16
 #define KMP_COMPARE_AND_STORE_ACQ16     __kmp_compare_and_store16
 #define KMP_COMPARE_AND_STORE_REL16     __kmp_compare_and_store16
+#endif
 extern kmp_int16 __kmp_compare_and_store16( volatile kmp_int16 *p, kmp_int16 cv, kmp_int16 sv );
 
 /* Define KMP_COMPARE_AND_STORE* in kmp_os.h for MIC, here for other platforms */

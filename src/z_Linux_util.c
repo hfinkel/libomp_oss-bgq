@@ -676,9 +676,9 @@ __kmp_launch_worker( void *thr )
     __kmp_itt_thread_name( gtid );
 #endif /* USE_ITT_BUILD */
 
-#if KMP_OS_LINUX   
+#if KMP_OS_LINUX && !KMP_OS_CNK
     __kmp_affinity_set_init_mask( gtid, FALSE );
-#elif KMP_OS_DARWIN
+#elif KMP_OS_DARWIN || KMP_OS_CNK
     // affinity not supported
 #else
     #error "Unknown or unsupported OS"
@@ -2165,9 +2165,9 @@ __kmp_runtime_destroy( void )
     if ( status != 0 && status != EBUSY ) {
         KMP_SYSFAIL( "pthread_cond_destroy", status );
     }
-    #if KMP_OS_LINUX
+    #if KMP_OS_LINUX && !KMP_OS_CNK
         __kmp_affinity_uninitialize();
-    #elif KMP_OS_DARWIN
+    #elif KMP_OS_DARWIN || KMP_OS_CNK
         // affinity not supported
     #else
         #error "Unknown or unsupported OS"

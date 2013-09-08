@@ -361,7 +361,7 @@ enum kmp_mem_fence_type {
 };
 
 
-#if KMP_MIC
+#if KMP_MIC || KMP_ARCH_PPC64
 /* cast ADDR to correct type so that proper intrinsic will be used */
 # define KMP_TEST_THEN_INC32( ADDR )            __sync_fetch_and_add( (kmp_int32*)(ADDR), 1 )
 //__atomic_fetch_add_explicit_4((ADDR),1,0)
@@ -397,6 +397,12 @@ enum kmp_mem_fence_type {
 # define KMP_COMPARE_AND_STORE_REL64(p,cv,sv)   __sync_bool_compare_and_swap((volatile kmp_uint64*)(p),(kmp_uint64)(cv),(kmp_uint64)(sv))
 # define KMP_COMPARE_AND_STORE_PTR(p,cv,sv)     __sync_bool_compare_and_swap((volatile kmp_uint64*)(p),(kmp_uint64)(cv),(kmp_uint64)(sv))
 // cannot use low-level CAS intrinsic because it has two pointer parameters (we often use 0 or 1)
+#if KMP_ARCH_PPC64
+# define KMP_COMPARE_AND_STORE_ACQ16(p,cv,sv)   __sync_bool_compare_and_swap((volatile kmp_uint16*)(p),(kmp_uint16)(cv),(kmp_uint16)(sv))
+# define KMP_COMPARE_AND_STORE_REL16(p,cv,sv)   __sync_bool_compare_and_swap((volatile kmp_uint16*)(p),(kmp_uint16)(cv),(kmp_uint16)(sv))
+# define KMP_COMPARE_AND_STORE_ACQ8(p,cv,sv)   __sync_bool_compare_and_swap((volatile kmp_uint8*)(p),(kmp_uint8)(cv),(kmp_uint8)(sv))
+# define KMP_COMPARE_AND_STORE_REL8(p,cv,sv)   __sync_bool_compare_and_swap((volatile kmp_uint8*)(p),(kmp_uint8)(cv),(kmp_uint8)(sv))
+#endif
 #endif
 
 #if ! defined KMP_TEST_THEN_INC32

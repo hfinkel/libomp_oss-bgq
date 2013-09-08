@@ -708,9 +708,13 @@ RET_TYPE __kmpc_atomic_##TYPE_ID##_##OP_ID( ident_t *id_ref, int gtid, TYPE * lh
 #define OP_GOMP_CRITICAL(OP,FLAG)
 #endif /* KMP_GOMP_COMPAT */
 
-#if KMP_MIC
+#if KMP_MIC || KMP_ARCH_PPC64
 
+ #if KMP_ARCH_PPC64
+ #define KMP_DO_PAUSE KMP_CPU_PAUSE()
+ #else
  #define KMP_DO_PAUSE _mm_delay_32( 30 )
+ #endif
 
  inline kmp_int32 __kmp_ex_compare_and_store32( volatile kmp_int32 *p, kmp_int32 cv, kmp_int32 sv ) {
     return __sync_bool_compare_and_swap( p, cv, sv );

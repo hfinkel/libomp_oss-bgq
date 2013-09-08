@@ -4567,7 +4567,7 @@ __kmp_register_root( int initial_thread )
     KMP_DEBUG_ASSERT( root->r.r_hot_team->t.t_bar[ bs_forkjoin_barrier ].b_arrived == KMP_INIT_BARRIER_STATE );
 
 
-#if KMP_OS_WINDOWS || KMP_OS_LINUX
+#if KMP_OS_WINDOWS || (KMP_OS_LINUX && !KMP_OS_CNK)
     if ( TCR_4(__kmp_init_middle) ) {
         __kmp_affinity_set_init_mask( gtid, TRUE );
     }
@@ -5190,7 +5190,7 @@ __kmp_initialize_team(
     KMP_MB();
 }
 
-#if KMP_OS_LINUX
+#if KMP_OS_LINUX && !KMP_OS_CNK
 /* Sets full mask for thread and returns old mask, no changes to structures. */
 static void
 __kmp_set_thread_affinity_mask_full_tmp( kmp_affin_mask_t *old_mask )
@@ -5665,7 +5665,7 @@ __kmp_allocate_team( kmp_root_t *root, int new_nproc, int max_nproc,
                 );
             }
 
-#if KMP_OS_LINUX
+#if KMP_OS_LINUX && !KMP_OS_CNK
             /* Temporarily set full mask for master thread before
                creation of workers. The reason is that workers inherit
                the affinity from master, so if a lot of workers are
@@ -5696,7 +5696,7 @@ __kmp_allocate_team( kmp_root_t *root, int new_nproc, int max_nproc,
                 }
             }
 
-#if KMP_OS_LINUX
+#if KMP_OS_LINUX && !KMP_OS_CNK
             if ( KMP_AFFINITY_CAPABLE() ) {
                 /* Restore initial master thread's affinity mask */
                 __kmp_set_system_affinity( old_mask, TRUE );
@@ -6449,7 +6449,7 @@ __kmp_fork_barrier( int gtid, int tid )
 
 #endif /* OMP_30_ENABLED */
 
-#if OMP_40_ENABLED && (KMP_OS_WINDOWS || KMP_OS_LINUX)
+#if OMP_40_ENABLED && (KMP_OS_WINDOWS || KMP_OS_LINUX) && !KMP_OS_CNK
     kmp_proc_bind_t proc_bind = team->t.t_proc_bind;
     if ( proc_bind == proc_bind_intel ) {
 #endif
@@ -6461,7 +6461,7 @@ __kmp_fork_barrier( int gtid, int tid )
             __kmp_balanced_affinity( tid, team->t.t_nproc );
         }
 #endif
-#if OMP_40_ENABLED && (KMP_OS_WINDOWS || KMP_OS_LINUX)
+#if OMP_40_ENABLED && (KMP_OS_WINDOWS || KMP_OS_LINUX) && !KMP_OS_CNK
     }
     else if ( ( proc_bind != proc_bind_false )
               && ( proc_bind != proc_bind_disabled )) {
@@ -7549,7 +7549,7 @@ __kmp_do_middle_initialize( void )
     //
     prev_dflt_team_nth = __kmp_dflt_team_nth;
 
-#if KMP_OS_WINDOWS || KMP_OS_LINUX
+#if KMP_OS_WINDOWS || (KMP_OS_LINUX && !KMP_OS_CNK)
     //
     // __kmp_affinity_initialize() will try to set __kmp_ncores to the
     // number of cores on the machine.
@@ -8116,7 +8116,7 @@ __kmp_cleanup( void )
     }
 
     if (TCR_4(__kmp_init_middle)) {
-#if KMP_OS_WINDOWS || KMP_OS_LINUX
+#if (KMP_OS_WINDOWS || KMP_OS_LINUX) && !KMP_OS_CNK
         __kmp_affinity_uninitialize();
 #endif /* KMP_OS_WINDOWS || KMP_OS_LINUX */
         TCW_4(__kmp_init_middle, FALSE);
