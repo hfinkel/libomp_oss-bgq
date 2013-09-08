@@ -2037,6 +2037,14 @@ __kmp_get_frequency_from_proc(
     double     freq   = HUGE_VAL;
     int        rc;
 
+#ifdef KMP_OS_CNK
+  #ifdef __bgq__
+    freq = 1600.0;
+  #else
+    #error "Unknown or unsupported OS"
+  #endif 
+#else
+
     //
     // FIXME - use KMP_CPUINFO_FILE here if it is set!!!
     //
@@ -2055,6 +2063,7 @@ __kmp_get_frequency_from_proc(
     if ( freq == HUGE_VAL || freq <= 0 ) {
         return result;
     }; // if
+#endif
     result = (kmp_uint64)( freq * 1.0E+6 );
     KA_TRACE( 5, ( "cpu frequency from /proc/cpuinfo: %" KMP_UINT64_SPEC "\n", result ) );
     return result;
@@ -2554,6 +2563,86 @@ __kmp_get_load_balance( int max )
 # endif // KMP_OS_DARWIN
 
 #endif // USE_LOAD_BALANCE
+
+#if KMP_ARCH_PPC64
+
+int
+__kmp_invoke_microtask( microtask_t pkfn,
+                        int gtid, int tid,
+                        int argc, void *p_argv[] ) {
+  switch (argc) {
+  default:
+    fprintf(stderr, "Too many args to microtask: %d!\n", argc);
+    fflush(stderr);
+    exit(-1);
+  case 0:
+    (*pkfn)(&gtid, &tid);
+    break;
+  case 1:
+    (*pkfn)(&gtid, &tid, p_argv[0]);
+    break;
+  case 2:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1]);
+    break;
+  case 3:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2]);
+    break;
+  case 4:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3]);
+    break;
+  case 5:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4]);
+    break;
+  case 6:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5]);
+    break;
+  case 7:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6]);
+    break;
+  case 8:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6], p_argv[7]);
+    break;
+  case 9:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6], p_argv[7], p_argv[8]);
+    break;
+  case 10:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6], p_argv[7], p_argv[8], p_argv[9]);
+    break;
+  case 11:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6], p_argv[7], p_argv[8], p_argv[9], p_argv[10]);
+    break;
+  case 12:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6], p_argv[7], p_argv[8], p_argv[9], p_argv[10],
+            p_argv[11]);
+    break;
+  case 13:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6], p_argv[7], p_argv[8], p_argv[9], p_argv[10],
+            p_argv[11], p_argv[12]);
+    break;
+  case 14:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6], p_argv[7], p_argv[8], p_argv[9], p_argv[10],
+            p_argv[11], p_argv[12], p_argv[13]);
+    break;
+  case 15:
+    (*pkfn)(&gtid, &tid, p_argv[0], p_argv[1], p_argv[2], p_argv[3], p_argv[4],
+            p_argv[5], p_argv[6], p_argv[7], p_argv[8], p_argv[9], p_argv[10],
+            p_argv[11], p_argv[12], p_argv[13], p_argv[14]);
+    break;
+  }
+
+  return 1;
+}
+
+#endif
 
 // end of file //
 
