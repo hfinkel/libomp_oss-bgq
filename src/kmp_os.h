@@ -483,7 +483,7 @@ enum kmp_mem_fence_type {
 #endif /* KMP_OS_WINDOWS */
 
 #if KMP_ARCH_PPC64
-# define KMP_MB()       __asm__ __volatile__ ("sync" : : : "memory")
+# define KMP_MB()       __sync_synchronize()
 #endif
 
 #ifndef KMP_MB
