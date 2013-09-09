@@ -839,7 +839,7 @@ __kmpc_flush(ident_t *loc, ...)
                 }; // if
             #endif // KMP_MIC
 	#elif KMP_ARCH_PPC64
-            // TODO
+            // Nothing needed here (we have a real MB above).
         #else
             #error Unknown or unsupported architecture
         #endif
